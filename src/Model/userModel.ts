@@ -44,6 +44,16 @@ const userSchema = new mongoose.Schema({
         type : Date,
         required : false,
     },
+    type : {
+        type : String,
+        required : true,
+        default : 'users'
+    },
+    status : {
+        type : String,
+        required : true,
+        default : 'pending'
+    },
     createdAt : {
         type : Date,
         required : true,

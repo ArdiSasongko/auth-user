@@ -4,6 +4,7 @@ import { authValidator } from "../Validator/authValidator";
 import { Utils } from "../Utils/Utils";
 import userModel from "../Model/userModel";
 import { Mailjet } from "../Utils/sendEmail";
+import { JWT } from "../Utils/JWT";
 
 export class authController {
     static async registerUser (req: Request, res: Response, next: NextFunction) {
@@ -26,7 +27,7 @@ export class authController {
                 email_token_verification : OTP_Token,
                 email_token_verification_time : Date.now() + new Utils().MAX_TIME_TOKEN
             }
-            
+
             const newUser = await new userModel(data).save()
 
             await Mailjet.sendMail({
@@ -40,6 +41,31 @@ export class authController {
             }
 
             return res.status(200).json({ data : newUser})
+        } catch (error: any) {
+            next(error)
+        }
+    }
+
+    static async login (req: Request, res: Response, next: NextFunction){
+        try {
+            const request = await authValidator.login.validateAsync(req.body)
+            const user = await userModel.findOne({ email : request.email })
+
+            if(!user) {
+                return res.status(404).json({ error : 'Email Invalid'})
+            }
+
+            await Utils.comparePassword(request.password, user.password)
+
+            const payload = {
+                email : user.email,
+                type : user.type,
+                email_verified : user.email_verified,
+            }
+
+            const token = await JWT.jwtSign(payload, user._id)
+
+            return res.status(201).json({ token : `${token}`})
         } catch (error: any) {
             next(error)
         }

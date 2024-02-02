@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { authController } from "../Controller/authController";
+import { GlobalMiddleware } from "../Middleware/GlobalMiddleware";
+import { userController } from "../Controller/userController";
 
-class authRouter {
+class userRouter {
 
     public router = Router()
 
@@ -15,12 +17,12 @@ class authRouter {
         this.router.get('/', (req,res)=>{
             res.status(200).send('Auth Router response success')
         })
+        this.router.get('/profile', GlobalMiddleware.authValidator, userController.getMe)
     }
 
     post(){
-        this.router.post('/register', authController.registerUser)
-        this.router.post('/login', authController.login)
+
     }
 }
 
-export default new authRouter().router
+export default new userRouter().router

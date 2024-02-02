@@ -5,6 +5,7 @@ import { Utils } from './Utils/Utils'
 import mongoose from 'mongoose'
 import { getEnvironment } from './Environment/environment'
 import authRouter from './Router/authRouter'
+import userRouter from './Router/userRouter'
 
 export class Server {
 
@@ -47,6 +48,7 @@ export class Server {
 
     setRouter(){
         this.app.use('/api/auth', authRouter)
+        this.app.use('/api/user', userRouter)
     }
 
     setNoRouter(){

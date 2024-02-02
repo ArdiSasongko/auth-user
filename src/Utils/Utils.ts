@@ -27,4 +27,18 @@ export class Utils {
             })
         })
     }
+
+    static comparePassword (password : string, hashpassword : string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            Bcrypt.compare(password, hashpassword, (err, same) => {
+                if(err){
+                    reject(err)
+                }else if(!same){
+                    reject(new Error("Password Invalid"))
+                }else{
+                    resolve(true)
+                }
+            })
+        })
+    }
 }
