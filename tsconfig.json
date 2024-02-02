@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "outDir": "dist",
+    "sourceMap": false,
+    "declaration": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true,
+    "lib": [
+      "ES2017.Object",
+      "ES2015",
+      "ES2017",
+      "DOM"
+    ]
+  },
+  "files": [
+    "./node_modules/@types/node/index.d.ts"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "package.json"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
