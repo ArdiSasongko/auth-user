@@ -42,7 +42,7 @@ export class authController {
 
             return res.status(200).json({ data : newUser})
         } catch (error: any) {
-            next(error)
+            return next(error)
         }
     }
 
@@ -67,7 +67,7 @@ export class authController {
 
             return res.status(201).json({ token : `${token}`})
         } catch (error: any) {
-            next(error)
+            return next(error)
         }
     }
 }

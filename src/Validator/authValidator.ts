@@ -14,4 +14,8 @@ export class authValidator {
         email : joi.string().email().required(),
         password : joi.string().min(8).max(25).required(),
     })
+
+    static emailVerify = joi.object({
+        OTP : joi.string().required()
+    })
 }

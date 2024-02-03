@@ -28,4 +28,17 @@ export class GlobalMiddleware {
             next(new Error('User doesnt exist'));
         }   
     }
+
+    static async emailVerified (req : any, res : Response, next : NextFunction) {
+        const user = req.user
+        try {
+            if(user.email_verified = false){
+                res.status(403)
+                next(new Error("Please verification email"))
+            }
+            next() 
+        } catch (error: any) {
+            next(error)
+        }
+    }
 }
