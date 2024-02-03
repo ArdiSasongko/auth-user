@@ -1,8 +1,29 @@
 import * as Bcrypt from 'bcrypt'
 import * as dotenv from 'dotenv'
+import { Storage } from '@google-cloud/storage'
+import * as Multer from 'multer'
+
+//connect storage in gcp
+const storage = new Storage({
+    keyFilename : './serviceaccount.json',
+    projectId : 'spheric-subject-412702'
+})
+
+//name bucket in gcp
+const bucket = storage.bucket('test-upload-12')
+const storageOptions = Multer.memoryStorage()
+const fileFilter = (req: any, file: any, cb: any) => {
+    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
+        cb(null, true)
+    }else{
+        cb(null, false)
+    }
+}
 
 export class Utils {
     public MAX_TIME_TOKEN = (5 * 60 * 1000)
+    //initilization
+    public multer = Multer({ storage : storageOptions, fileFilter : fileFilter})
     
     static dotenv() {
         dotenv.config({ path : '.env'})

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { authController } from "../Controller/authController";
 import { GlobalMiddleware } from "../Middleware/GlobalMiddleware";
 import { userController } from "../Controller/userController";
+import { Utils } from "../Utils/Utils";
 
 class userRouter {
 
@@ -29,6 +30,7 @@ class userRouter {
 
     patch(){
         this.router.patch('/update/password', userController.updatePassword)
+        this.router.patch('/update/profile', GlobalMiddleware.authValidator, GlobalMiddleware.emailVerified, new Utils().multer.single('image'), userController.updateProfile)
     }
 }
 

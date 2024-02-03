@@ -4,6 +4,15 @@ import { authValidator } from "../Validator/authValidator";
 import { Utils } from "../Utils/Utils";
 import { Mailjet } from "../Utils/sendEmail";
 import { userValidator } from "../Validator/userValidator";
+import { Storage } from "@google-cloud/storage";
+
+const storage = new Storage({
+    keyFilename : '././serviceaccount.json',
+    projectId : 'spheric-subject-412702'
+})
+
+//name bucket in gcp
+const bucket = storage.bucket('test-upload-12')
 
 export class userController {
     static async getMe(req: any, res: Response, next: NextFunction){
@@ -171,6 +180,61 @@ export class userController {
             return res.status(201).json({ message : "Success update password"})
         } catch (error: any) {
             return next(error)
+        }
+    }
+
+    static async updateProfile (req: any, res: Response, next: NextFunction){
+        const user = req.user
+        const path = req.file
+        try {
+            if(!path){
+                req.errorStatus = 403
+                return next(new Error('Please upload image'))
+            }
+
+            const ext = req.file.originalname.split('.').pop()
+            if(ext !== "png" && ext !== "jpg" && ext !== "jpeg" && ext !== "PNG" && ext !== "JPG" && ext !== "JPEG") {
+                req.errorStatus = 400
+                return next(new Error('Only image'))
+            }
+
+            const blob = bucket.file('/profile' + path.originalname)
+            const blobStream = blob.createWriteStream()
+            blobStream.end(path.buffer)
+
+            await new Promise((resolve, reject) => {
+                blobStream.on('finish', resolve),
+                blobStream.on('error', reject)
+            })
+
+            const urlImage = `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+
+            const updateImage = await userModel.findOneAndUpdate(
+                {
+                    _id : user.aud
+                },
+                {
+                    profile : urlImage,
+                    updateAt : Date.now()
+                },
+                {
+                    new : true,
+                    projection:{
+                        __v : 0,
+                        email_token_verification : 0,
+                        email_token_verification_time : 0,
+                        reset_password_token : 0,
+                        resset_password_token_time : 0
+                    }
+                }
+            )
+
+            return res.status(201).json({
+                message : 'Success update profile',
+                data : updateImage?.profile
+            })
+        } catch (error: any) {
+            next(error)
         }
     }
 }
