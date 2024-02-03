@@ -9,5 +9,10 @@ export const EnvironmentProd : Environment = {
         api_key : process.env.MAILJET_API_PROD,
         secret_key : process.env.MAILJET_SECRET_PROD,
         email_from : process.env.EMAIL_FROM_PROD
+    },
+    redis:{
+        host: process.env.REDIS_HOST,
+        port: parseInt(process.env.REDIS_PORT),
+        password: process.env.REDIS_PASSWORD
     }
 }

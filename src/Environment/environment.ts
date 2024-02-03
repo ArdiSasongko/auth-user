@@ -9,6 +9,11 @@ export interface Environment{
         api_key?: string,
         secret_key?: string,
         email_from?: string
+    },
+    redis?:{
+        host?: string,
+        port?: number,
+        password?: string
     }
 }
 

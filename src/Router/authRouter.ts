@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authController } from "../Controller/authController";
+import { GlobalMiddleware } from "../Middleware/GlobalMiddleware";
 
 class authRouter {
 
@@ -20,6 +21,7 @@ class authRouter {
     post(){
         this.router.post('/register', authController.registerUser)
         this.router.post('/login', authController.login)
+        this.router.post('/logout', GlobalMiddleware.authValidator, authController.logout)
     }
 }
 

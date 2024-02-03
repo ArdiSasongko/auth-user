@@ -6,6 +6,7 @@ import mongoose from 'mongoose'
 import { getEnvironment } from './Environment/environment'
 import authRouter from './Router/authRouter'
 import userRouter from './Router/userRouter'
+import { Redis } from './Utils/Redis'
 
 export class Server {
 
@@ -21,6 +22,7 @@ export class Server {
     setConfig(){
         this.setDotenv()
         this.setDB()
+        this.setRedis()
         this.setCors()
         this.setBodyParser()
     }
@@ -36,6 +38,10 @@ export class Server {
         }).catch((err) => {
             console.log(err.message)
         })
+    }
+
+    setRedis(){
+        Redis.connectedRedis()
     }
 
     setCors(){

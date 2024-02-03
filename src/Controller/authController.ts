@@ -5,6 +5,7 @@ import { Utils } from "../Utils/Utils";
 import userModel from "../Model/userModel";
 import { Mailjet } from "../Utils/sendEmail";
 import { JWT } from "../Utils/JWT";
+import { Redis } from "../Utils/Redis";
 
 export class authController {
     static async registerUser (req: Request, res: Response, next: NextFunction) {
@@ -64,10 +65,32 @@ export class authController {
             }
 
             const token = await JWT.jwtSign(payload, user._id)
-
-            return res.status(201).json({ token : `${token}`})
+            const refreshToken = await JWT.jwtSignRefreshToken(payload, user._id)
+            return res.status(201).json(
+                { 
+                    token : token,
+                    refreshToken : refreshToken
+                }
+                )
         } catch (error: any) {
             return next(error)
+        }
+    }
+
+    static async logout (req: any, res: Response, next: NextFunction) {
+        const user = req.user
+        try {
+            if(user) {
+                await Redis.deleteKey(user.aud)
+                return res.status(200).json({ message : 'Logout success'})
+            }else{
+                req.errorStatus = 403
+                next(new Error('Access forbidden'))
+            }
+        }
+        catch(error: any){
+            req.errorStatus = 403
+            next(error)
         }
     }
 }
